@@ -33,12 +33,18 @@ module.exports.index = async (req, res) => {
     }
     // Het Tim Kiem //
     const pagination = await paginationHelper(req);
+
+    // Sap xep
+    const sort = {};
+    if (req.query.sortKey && req.query.sortValue){
+        sort[req.query.sortKey] = req.query.sortValue;
+    } else {
+        sort.position = "desc";
+    }
     const products = await Product.find(find)
                         .limit(pagination.limitItems)
                         .skip(pagination.skip)
-                        .sort({
-                            position: "desc"
-                        });
+                        .sort(sort);
 
   res.render("admin/pages/products/index", {
     pageTitle: "Quản lý sản phẩm",
@@ -121,10 +127,7 @@ module.exports.create = async (req, res) => {
 }
 // [POST] /admin222/products/create
 module.exports.createPost = async(req, res) => {
-    console.log(req.file);
-    if (req.file && req.file.filename){
-         req.body.thumbnail = `/uploads/${req.file.filename}`;
-    }
+    console.log(req.body);
     req.body.price = parseInt(req.body.price);
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);

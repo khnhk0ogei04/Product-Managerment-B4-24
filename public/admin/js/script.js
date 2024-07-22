@@ -241,3 +241,40 @@ if (uploadImage){
         }
     });
 }
+// SORT
+const sort = document.querySelector("[sort]");
+if (sort){
+    let url = new URL(window.location.href);
+    const select = sort.querySelector("[sort-select]");
+    select.addEventListener("change", () => {
+        const [sortKey, sortValue] = select.value.split("-");
+        // console.log(sortKey);
+        if (sortKey && sortValue){
+            console.log("Abc");
+            url.searchParams.set("sortKey", sortKey);
+            url.searchParams.set("sortValue", sortValue);
+            window.location.href = url.href;
+        }
+    })
+
+    // Them selected mac dinh cho the option:
+    const defaultSortKey = url.searchParams.get("sortKey");
+    const defaultSortValue = url.searchParams.get("sortValue");
+    if (defaultSortKey && defaultSortValue){
+        // console.log(defaultSortKey);
+        // console.log(defaultSortValue);
+            const optionSelected = select.querySelector(`option[value="${defaultSortKey}-${defaultSortValue}"]`);
+            optionSelected.setAttribute("selected", true);
+            // optionSelected.selected = true
+    }
+    // Clear 
+    const buttonClear = document.querySelector("[sort-clear]");
+    if (buttonClear){
+        buttonClear.addEventListener("click", () => {
+            url.searchParams.delete("sortKey");
+            url.searchParams.delete("sortValue");
+            window.location.href = url.href;
+        })
+    }
+}
+// End srot

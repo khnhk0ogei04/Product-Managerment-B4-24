@@ -1,9 +1,9 @@
-extends ../../layouts/default.pug
-block main
-  h1 #{pageTitle}
+extends ../../layouts/default.pug 
+
+block main 
+  h1(class="mb-4") Add new category list
   form(
-    action=`/${prefixAdmin}/products/edit/${product.id}?_method=PATCH`
-    id=`form-create-product`
+    action=`/${prefixAdmin}/products-category/create`
     enctype="multipart/form-data"
     method="POST"
   )
@@ -15,8 +15,15 @@ block main
         id="title"
         name="title"
         required
-        value=product.title
       )
+    div(class="form-group")
+        label(for="title") Danh mục cha 
+        input(
+            type="text"
+            class="form-control"
+            id="parent-id"
+            name="parent-id"
+        )
     div(class="form-group")
       label(for="desc") Mô tả
       textarea(
@@ -24,37 +31,7 @@ block main
         id="desc"
         name="description"
         rows="5"
-        textarea-mce
-      ) #{product.description}
-    div(class="form-group")
-      label(for="price") Giá
-      input(
-        type="number"
-        class="form-control"
-        id="price"
-        name="price"
-        value=product.price
-        min="0"
-      )
-    div(class="form-group")
-      label(for="discount") % Giảm giá
-      input(
-        type="number"
-        class="form-control"
-        id="discount"
-        name="discountPercentage"
-        value=product.discountPercentage
-        min="0"
-      )
-    div(class="form-group")
-      label(for="stock") Số lượng
-      input(
-        type="number"
-        class="form-control"
-        id="stock"
-        name="stock"
-        value=product.stock
-        min="0"
+        textarea-mce 
       )
     div(
       class="form-group"
@@ -70,7 +47,7 @@ block main
         upload-image-input
       )
       img(
-        src=product.thumbnail
+        src=""
         class="image-preview"
         upload-image-preview
       )
@@ -83,7 +60,6 @@ block main
         name="position"
         placeholder="Tự động tăng"
         min="1"
-        value=product.position
       )
     div(class="form-group form-check form-check-inline")
       input(
@@ -92,7 +68,7 @@ block main
         id="statusActive"
         name="status"
         value="active"
-        checked=(product.status === "active" ? true : false)
+        checked
       )
       label(for="statusActive" class="form-check-label") Hoạt động
     div(class="form-group form-check form-check-inline")
@@ -102,11 +78,10 @@ block main
         id="statusInActive"
         name="status"
         value="inactive"
-        checked=(product.status == "inactive" ? true : false)
       )
       label(for="statusInActive" class="form-check-label") Dừng hoạt động
     div(class="form-group")
       button(
         type="submit"
         class="btn btn-primary"
-      ) Update
+      ) Add new
