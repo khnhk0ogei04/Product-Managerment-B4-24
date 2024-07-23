@@ -3,7 +3,7 @@ include ../../mixins/select-tree.pug
 block main 
   h1(class="mb-4") Add new category list
   form(
-    action=`/${prefixAdmin}/products-category/create`
+    action=`/${prefixAdmin}/products-category/edit/${category.id}?_method=PATCH`
     enctype="multipart/form-data"
     method="POST"
   )
@@ -15,17 +15,18 @@ block main
         id="title"
         name="title"
         required
+        value=category.title
       )
     div(class="form-group")
         label(for="title") Danh mục cha 
         select(
-          name="parent_id"
+          name="parentId"
           class="form-control"
-          id="parent_id"
+          id="parentId"
         )
           option(value="") ---Chọn danh mục cha---
           if(categories)
-            +select-tree(categories)
+            +select-tree(categories, 1, category.parentId)
         //- input(
         //-     type="text"
         //-     class="form-control"
@@ -40,7 +41,7 @@ block main
         name="description"
         rows="5"
         textarea-mce 
-      )
+      ) #{category.description}
     div(
       class="form-group"
       upload-image
@@ -55,7 +56,7 @@ block main
         upload-image-input
       )
       img(
-        src=""
+        src=category.thumbnail
         class="image-preview"
         upload-image-preview
       )
@@ -68,6 +69,7 @@ block main
         name="position"
         placeholder="Tự động tăng"
         min="1"
+        value=category.position
       )
     div(class="form-group form-check form-check-inline")
       input(
@@ -76,7 +78,7 @@ block main
         id="statusActive"
         name="status"
         value="active"
-        checked
+        checked=(category.status == "active" ? true : false)
       )
       label(for="statusActive" class="form-check-label") Hoạt động
     div(class="form-group form-check form-check-inline")
@@ -86,10 +88,11 @@ block main
         id="statusInActive"
         name="status"
         value="inactive"
+        checked=(category.status == "inactive" ? false : true)
       )
       label(for="statusInActive" class="form-check-label") Dừng hoạt động
     div(class="form-group")
       button(
         type="submit"
         class="btn btn-primary"
-      ) Add new
+      ) UPDATE

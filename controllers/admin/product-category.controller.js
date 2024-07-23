@@ -1,14 +1,29 @@
 const { prefixAdmin } = require('../../config/system');
 const ProductCategory = require('../../models/product-category.model');
+const createTreeHelper = require('../../helpers/createTree.helper');
+const systemConfig = require('../../config/system');
+const { countDocuments } = require('../../models/product.model');
 // [GET] /admin/products-category
-module.exports.index = (req, res) => {
+module.exports.index = async (req, res) => {
+    const records = await ProductCategory.find({
+        deleted: false
+    })
     res.render("admin/pages/products-category/index", {
-        pageTitle: "Category List"
+        pageTitle: "Category List",
+        records: records
     })
 }
-module.exports.create = (req, res) => {
+// [GET] /admin/products-category/create
+module.exports.create = async (req, res) => {
+    const categories = await ProductCategory.find({
+        deleted: false
+    })
+
+    const newCategories = createTreeHelper(categories);
+    console.log(newCategories);
     res.render("admin/pages/products-category/create", {
-        pageTitle: "Add new category list"
+        pageTitle: "Add new category list",
+        categories: newCategories
     })
 }
 module.exports.createPost = async (req, res) => {
@@ -23,4 +38,37 @@ module.exports.createPost = async (req, res) => {
     const newCategory = new ProductCategory(req.body);
     await newCategory.save();
     res.redirect(`/${prefixAdmin}/products-category`);
+}
+// [GET] admin222/products-category/edit/:id
+module.exports.edit = async(req, res) => {
+    const id = req.params.id;
+    const category = await ProductCategory.findOne({
+        _id: id,
+        deleted: false
+    })
+    const categories = await ProductCategory.find({
+        deleted: false
+    })
+    console.log(category);
+    const newCategories = createTreeHelper(categories);
+    res.render("admin/pages/products-category/edit", {
+        pageTitle: "Edit products",
+        categories: newCategories,
+        category: category
+    })
+}
+// [PATCH] /admin222/products-category/create:
+module.exports.editPatch = async(req, res) => {
+    if (req.body.position){
+        req.body.position = parseInt(req.body.postion);
+    } else {
+        const countCategory = await ProductCategory.countDocuments({});
+        req.body.position = countCategory + 1;
+    }
+    await ProductCategory.updateOne({
+        _id: id,
+        deleted: false
+    }, req.body);
+    req.flash('success', 'Update successfully');
+    res.redirect('back');
 }

@@ -1,0 +1,44 @@
+extends ../../layouts/default.pug 
+block main 
+    h1(class="mb-4") Phân quyền
+    div(class="text-right")
+        button(
+            type="submit"
+            class="btn btn-primary mb-3"
+            button-submit=`/${prefixAdmin}/roles/permissions`
+        ) Update 
+    table(
+        class="table table-hover table-sm"
+        table-permissions
+    )
+        thead
+            tr 
+                th Tính năng 
+                each item in records 
+                    th(class="text-center" role-id=item.id) #{item.title}
+        tbody 
+            tr 
+                td(colspan="4")
+                    b Danh mục sản phẩm 
+            tr()
+                td Xem 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="product-category__view" checked=(item.permissions.includes("product-category__view")) ? true : false)
+            tr()
+                td Thêm mới 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="product-category__create" checked=(item.permissions.includes("product-category__create")) ? true : false)
+            tr()
+                td Chỉnh sửa 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="product-category__edit" checked=(item.permissions.includes("product-category__edit")) ? true : false)
+            tr()
+                td Xóa 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="product-category__delete" checked=(item.permissions.includes("product-category__deleted")) ? true : false)
+            
+

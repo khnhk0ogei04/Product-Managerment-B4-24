@@ -3,6 +3,8 @@ const paginationHelper = require("../../helpers/pagination.helper");
 const { model } = require("mongoose");
 const { prefixAdmin } = require("../../config/system");
 const system = require("../../config/system");
+const ProductCategory = require("../../models/product-category.model");
+const createTreeHelper = require("../../helpers/createTree.helper");
 module.exports.index = async (req, res) => {
     const find = {
         deleted: false
@@ -121,8 +123,13 @@ module.exports.changePosition = async(req, res) => {
 }
 // GET /admin222/products/create
 module.exports.create = async (req, res) => {
+    const categories = await ProductCategory.find({
+        deleted: false
+    });
+    const newCategories = createTreeHelper(categories);
     res.render("admin/pages/products/create", {
-        pageTitle: "Thêm mới sản phẩm"
+        pageTitle: "Thêm mới sản phẩm",
+        categories: newCategories
     })
 }
 // [POST] /admin222/products/create
@@ -151,14 +158,23 @@ module.exports.edit = async(req, res) => {
             deleted: false
         });
         console.log(product);
-        res.render("admin/pages/products/edit", {
-            pageTitle: "Edit products",
-            product: product
-        })
+        if(product){
+            const categories = await ProductCategory.find({
+                deleted: false
+            });
+            const newCategories = createTreeHelper(categories);
+            res.render("admin/pages/products/edit", {
+                pageTitle: "Edit products",
+                product: product,
+                categories: newCategories
+            })
+        } else {
+            res.redirect(`/${prefixAdmin}/products`);
+        } 
     } catch (error) {
-        res.redirect(`/${prefixAdmin}/products`);
+            res.redirect(`/${prefixAdmin}/products`);
+        }
     }
-}
 // [PATCH] /admin222/products/edit/:id
 module.exports.editPatch = async(req, res) => {
     try{

@@ -1,3 +1,4 @@
+
 const listButtonStatus = document.querySelectorAll("[button-status]");
 if(listButtonStatus.length > 0){
     let url = new URL(window.location.href);
@@ -278,3 +279,41 @@ if (sort){
     }
 }
 // End srot
+// Permissions
+const tablePermissions = document.querySelector("[table-permissions]");
+if (tablePermissions){
+    const buttonSubmit = document.querySelector("[button-submit]");
+    buttonSubmit.addEventListener("click", () => {
+        const roles = [];
+        const listElementRoleId = tablePermissions.querySelectorAll("[role-id]");
+        console.log(listElementRoleId.length);
+        for (const element of listElementRoleId){
+            const roleId = element.getAttribute("role-id");
+            console.log(roleId);
+            const role = {
+                id: roleId,
+                permissions: []
+            }
+            const listInputChecked = tablePermissions.querySelectorAll(`input[data-id="${roleId}"]:checked`);
+            listInputChecked.forEach(input => {
+                const dataName = input.getAttribute("data-name");
+                role.permissions.push(dataName);
+            })
+            roles.push(role);
+        }
+        console.log(roles);
+        const path = buttonSubmit.getAttribute("button-submit");
+        fetch(path, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(roles)
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+        })
+    })
+}
+// End Permissions
