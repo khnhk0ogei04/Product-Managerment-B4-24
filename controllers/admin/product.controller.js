@@ -5,6 +5,8 @@ const { prefixAdmin } = require("../../config/system");
 const system = require("../../config/system");
 const ProductCategory = require("../../models/product-category.model");
 const createTreeHelper = require("../../helpers/createTree.helper");
+const Account = require("../../models/account.model");
+const moment = require('moment');
 module.exports.index = async (req, res) => {
     const find = {
         deleted: false
@@ -47,7 +49,28 @@ module.exports.index = async (req, res) => {
                         .limit(pagination.limitItems)
                         .skip(pagination.skip)
                         .sort(sort);
-
+    for (const item of products){
+        if(item.createdBy){
+            // console.log(item.createdBy);
+            const accountCreated = await Account.findOne({
+                _id: item.createdBy
+            });
+            item.createdByFullName = accountCreated.fullName;
+        } else {
+            item.createdByFullName = "";
+        }
+        item.createdAtFormat = moment(item.createdAt).format("DD/MM/YY HH:mm:ss");
+        // Neu HH thi dinh dang 24h, hh thi dinh dang 12h
+        if(item.updatedBy){
+            const accountUpdated = await Account.findOne({
+                _id: item.updateBy
+            });
+            item.updatedByFullName = accountUpdated.fullName;
+        } else {
+            item.updatedByFullName = "No Information";
+        }
+        item.updatedAtFormat = moment(item.updatedAt).format("DD/MM/YY HH:mm:ss");
+    }
   res.render("admin/pages/products/index", {
     pageTitle: "Quản lý sản phẩm",
     products: products,
@@ -97,16 +120,18 @@ module.exports.changeMulti = async (req, res) => {
 }
 // DELETE
 module.exports.deleteItem = async(req, res) => {
-    const id = req.params.id;
-    await Product.updateOne({
-        _id: id
-    }, {
-        deleted: true
-    });
-    res.json({
-        code: 200
-    });
-}
+        const id = req.params.id;
+        await Product.updateOne({
+            _id: id
+        }, {
+            deleted: true,
+            deletedBy: res.locals.account.id
+        });
+        req.flash('success', 'Delete item successfully');
+        res.json({
+            code: 200
+        });
+    } 
 // PATCH [CHANGE POSITION]
 module.exports.changePosition = async(req, res) => {
     const id = req.params.id;
@@ -134,55 +159,8 @@ module.exports.create = async (req, res) => {
 }
 // [POST] /admin222/products/create
 module.exports.createPost = async(req, res) => {
-    console.log(req.body);
-    req.body.price = parseInt(req.body.price);
-    req.body.discountPercentage = parseInt(req.body.discountPercentage);
-    req.body.stock = parseInt(req.body.stock);
-    if (req.body.position){
-        req.body.position = parseInt(req.body.position);
-    } else {
-        const countProducts = await Product.countDocuments({});
-        req.body.position = countProducts + 1;
-    }
-    const newProduct = new Product(req.body);
-    await newProduct.save();
-    res.redirect(`/${prefixAdmin}/products`);
-}
-
-// [GET] /admin222/products/edit/:id
-module.exports.edit = async(req, res) => {
-    try {
-        const id = req.params.id;
-        const product = await Product.findOne({
-            _id: id,
-            deleted: false
-        });
-        console.log(product);
-        if(product){
-            const categories = await ProductCategory.find({
-                deleted: false
-            });
-            const newCategories = createTreeHelper(categories);
-            res.render("admin/pages/products/edit", {
-                pageTitle: "Edit products",
-                product: product,
-                categories: newCategories
-            })
-        } else {
-            res.redirect(`/${prefixAdmin}/products`);
-        } 
-    } catch (error) {
-            res.redirect(`/${prefixAdmin}/products`);
-        }
-    }
-// [PATCH] /admin222/products/edit/:id
-module.exports.editPatch = async(req, res) => {
-    try{
-        const id = req.params.id;
-        console.log(id);
-        if (req.file && req.file.filename){
-            req.body.thumbnail = `/uploads/${req.file.filename}`;
-        }
+    if(res.locals.role.permissions.includes("products_create")){
+        console.log(req.body);
         req.body.price = parseInt(req.body.price);
         req.body.discountPercentage = parseInt(req.body.discountPercentage);
         req.body.stock = parseInt(req.body.stock);
@@ -192,14 +170,71 @@ module.exports.editPatch = async(req, res) => {
             const countProducts = await Product.countDocuments({});
             req.body.position = countProducts + 1;
         }
-        await Product.updateOne({
-            _id : id,
-        }, req.body);
-        req.flash("success", "Update successully");
-    } catch (error) {
-        req.flash("error", "Updated failed");
+        req.body.createdBy = res.locals.account.id;
+        const newProduct = new Product(req.body);
+        await newProduct.save();
+        res.redirect(`/${prefixAdmin}/products`);
+    } else {
+        res.send(`403`);
     }
-    res.redirect("back");
+}
+
+// [GET] /admin222/products/edit/:id
+module.exports.edit = async(req, res) => {
+        try {
+            const id = req.params.id;
+            const product = await Product.findOne({
+                _id: id,
+                deleted: false
+            });
+            console.log(product);
+            if(product){
+                const categories = await ProductCategory.find({
+                    deleted: false
+                });
+                const newCategories = createTreeHelper(categories);
+                res.render("admin/pages/products/edit", {
+                    pageTitle: "Edit products",
+                    product: product,
+                    categories: newCategories
+                })
+            } else {
+                res.redirect(`/${prefixAdmin}/products`);
+            } 
+        } catch (error) {
+                res.redirect(`/${prefixAdmin}/products`);
+    }
+}
+// [PATCH] /admin222/products/edit/:id
+module.exports.editPatch = async(req, res) => {
+    if(res.local.role.permissions.includes("products_edit")){
+        try{
+            const id = req.params.id;
+            console.log(id);
+            if (req.file && req.file.filename){
+                req.body.thumbnail = `/uploads/${req.file.filename}`;
+            }
+            req.body.price = parseInt(req.body.price);
+            req.body.discountPercentage = parseInt(req.body.discountPercentage);
+            req.body.stock = parseInt(req.body.stock);
+            if (req.body.position){
+                req.body.position = parseInt(req.body.position);
+            } else {
+                const countProducts = await Product.countDocuments({});
+                req.body.position = countProducts + 1;
+            }
+            req.body.updatedBy = res.locals.account.id;
+            await Product.updateOne({
+                _id : id,
+            }, req.body);
+            req.flash("success", "Update successully");
+        } catch (error) {
+            req.flash("error", "Updated failed");
+        }
+        res.redirect("back");
+    } else {
+        res.send(`403`);
+    }
 }
 
 // [GET] /admin222/products/detail/:id

@@ -1,3 +1,4 @@
+const Account = require("../../models/account.model");
 const Product = require("../../models/product.model");
 const { model } = require('mongoose');
 
@@ -6,7 +7,16 @@ module.exports.index = async (req, res) => {
         deleted: true
     }
     const products = await Product.find(find)
-
+    for (const item of products){
+        if(item.deletedBy){
+            const accountDelete = await Account.findOne({
+                _id: item.deletedBy
+            })
+            item.deletedByFullName = accountDelete.fullName;
+        } else {
+            item.deletedByFullName = "";
+        }
+    }
     res.render("admin/pages/trash/index", {
         pageTitle: "Thùng rác",
         products: products

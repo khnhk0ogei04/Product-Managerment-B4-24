@@ -19,26 +19,101 @@ block main
         tbody 
             tr 
                 td(colspan="4")
+                    b Danh sách sản phẩm 
+            tr()
+                td Xem 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="products_view" checked=(item.permissions.includes("products_view")) ? true : false)
+            tr()
+                td Thêm mới 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="products_create" checked=(item.permissions.includes("products_create")) ? true : false)
+            tr()
+                td Chỉnh sửa 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="products_edit" checked=(item.permissions.includes("products_edit")) ? true : false)
+            tr()
+                td Xóa 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="products_deleted" checked=(item.permissions.includes("products_deleted")) ? true : false)
+            tr 
+                td(colspan="4")
                     b Danh mục sản phẩm 
             tr()
                 td Xem 
                 each item in records 
                     td(class="text-center")
-                        input(type="checkbox" data-id = item.id data-name="product-category__view" checked=(item.permissions.includes("product-category__view")) ? true : false)
+                        input(type="checkbox" data-id = item.id data-name="products-category__view" checked=(item.permissions.includes("products-category__view")) ? true : false)
             tr()
                 td Thêm mới 
                 each item in records 
                     td(class="text-center")
-                        input(type="checkbox" data-id = item.id data-name="product-category__create" checked=(item.permissions.includes("product-category__create")) ? true : false)
+                        input(type="checkbox" data-id = item.id data-name="products-category__create" checked=(item.permissions.includes("products-category__create")) ? true : false)
             tr()
                 td Chỉnh sửa 
                 each item in records 
                     td(class="text-center")
-                        input(type="checkbox" data-id = item.id data-name="product-category__edit" checked=(item.permissions.includes("product-category__edit")) ? true : false)
+                        input(type="checkbox" data-id = item.id data-name="products-category__edit" checked=(item.permissions.includes("products-category__edit")) ? true : false)
             tr()
                 td Xóa 
                 each item in records 
                     td(class="text-center")
-                        input(type="checkbox" data-id = item.id data-name="product-category__delete" checked=(item.permissions.includes("product-category__deleted")) ? true : false)
+                        input(type="checkbox" data-id = item.id data-name="products-category__deleted" checked=(item.permissions.includes("products-category__deleted")) ? true : false)
+            tr 
+                td(colspan="4")
+                    b Nhóm quyền 
+            tr()
+                td Xem 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="roles_view" checked=(item.permissions.includes("roles_view")) ? true : false)
+            tr()
+                td Thêm mới 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="roles_create" checked=(item.permissions.includes("roles_create")) ? true : false)
+            tr()
+                td Chỉnh sửa 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="roles_edit" checked=(item.permissions.includes("roles_edit")) ? true : false)
+            tr()
+                td Xóa 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="roles_deleted"  checked=(item.permissions.includes("roles_deleted"))? true : false)
+            tr()
+                td Phân quyền 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="roles_permissions"  checked=(item.permissions.includes("roles_permissions"))? true : false)
+            tr 
+                td(colspan="4")
+                    b Tài khoản Admin 
+            tr()
+                td Xem 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="accounts_view" checked=(item.permissions.includes("accounts_view")) ? true : false)
+            tr()
+                td Thêm mới 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="accounts_create" checked=(item.permissions.includes("accounts_create")) ? true : false)
+            tr()
+                td Chỉnh sửa 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="accounts_edit" checked=(item.permissions.includes("accounts_edit")) ? true : false)
+            tr()
+                td Xóa 
+                each item in records 
+                    td(class="text-center")
+                        input(type="checkbox" data-id = item.id data-name="accounts_deleted"  checked=(item.permissions.includes("accounts_deleted"))? true : false)
             
+
 
