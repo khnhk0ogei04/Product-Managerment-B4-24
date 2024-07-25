@@ -9,9 +9,8 @@
       if(role.permissions.includes("products_view"))
         li 
           a(href=`/${prefixAdmin}/trash`) Thùng rác
-      if(role.permissions.includes("products-category_view"))
-        li 
-          a(href=`/${prefixAdmin}/products-category`) List of categories
+      li 
+        a(href=`/${prefixAdmin}/products-category`) List of categories
       if(role.permissions.includes("roles_view"))
         li 
           a(href=`/${prefixAdmin}/roles`) Nhóm quyền

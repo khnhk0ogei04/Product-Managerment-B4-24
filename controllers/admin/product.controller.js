@@ -63,7 +63,7 @@ module.exports.index = async (req, res) => {
         // Neu HH thi dinh dang 24h, hh thi dinh dang 12h
         if(item.updatedBy){
             const accountUpdated = await Account.findOne({
-                _id: item.updateBy
+                _id: item.updatedBy
             });
             item.updatedByFullName = accountUpdated.fullName;
         } else {
@@ -207,7 +207,7 @@ module.exports.edit = async(req, res) => {
 }
 // [PATCH] /admin222/products/edit/:id
 module.exports.editPatch = async(req, res) => {
-    if(res.local.role.permissions.includes("products_edit")){
+    if(res.locals.role.permissions.includes("products_edit")){
         try{
             const id = req.params.id;
             console.log(id);

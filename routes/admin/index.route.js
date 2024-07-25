@@ -16,7 +16,7 @@ module.exports.index = (app) => {
     dashboardRoute);
   app.use(`${path}/products`,authMiddleware.requireAuth, productsRoute);
   app.use(`${path}/trash`, authMiddleware.requireAuth,  trashRoute);
-  app.use(`${path}/products-category`, authMiddleware.requireAuth,  productsCategoryRoute);
+  app.use(`${path}/products-category`, authMiddleware.requireAuth, productsCategoryRoute);
   app.use(`${path}/roles`, authMiddleware.requireAuth,  rolesRoute);
   app.use(`${path}/accounts`, authMiddleware.requireAuth,  accountRoute);
   app.use(`${path}/profile`, authMiddleware.requireAuth, profileRoute);

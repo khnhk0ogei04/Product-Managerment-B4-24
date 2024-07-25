@@ -3,11 +3,12 @@ const ProductCategory = require('../../models/product-category.model');
 const createTreeHelper = require('../../helpers/createTree.helper');
 const systemConfig = require('../../config/system');
 const { countDocuments } = require('../../models/product.model');
-// [GET] /admin/products-category
+// [GET] /admin222/products-category
 module.exports.index = async (req, res) => {
     const records = await ProductCategory.find({
         deleted: false
-    })
+    }).sort({position: "asc"})
+    console.log(records);
     res.render("admin/pages/products-category/index", {
         pageTitle: "Category List",
         records: records
@@ -18,9 +19,7 @@ module.exports.create = async (req, res) => {
     const categories = await ProductCategory.find({
         deleted: false
     })
-
     const newCategories = createTreeHelper(categories);
-    console.log(newCategories);
     res.render("admin/pages/products-category/create", {
         pageTitle: "Add new category list",
         categories: newCategories
@@ -59,6 +58,7 @@ module.exports.edit = async(req, res) => {
 }
 // [PATCH] /admin222/products-category/create:
 module.exports.editPatch = async(req, res) => {
+    const id = req.params.id;
     if (req.body.position){
         req.body.position = parseInt(req.body.postion);
     } else {
@@ -67,6 +67,22 @@ module.exports.editPatch = async(req, res) => {
     }
     await ProductCategory.updateOne({
         _id: id,
+        deleted: false
+    }, req.body);
+    req.flash('success', 'Update successfully');
+    res.redirect('back');
+}
+// [PATCH] /admin222/products-category/edit/:id
+module.exports.editPatch = async(req, res) => {
+    const id = req.params.id;
+    if (req.body.position){
+        req.body.position = parseInt(req.body.position);
+    } else {
+        const countCategory = await ProductCategory.countDocuments({});
+        req.body.position = countCategory + 1;
+    }
+    await ProductCategory.updateOne({
+        _id : id,
         deleted: false
     }, req.body);
     req.flash('success', 'Update successfully');
