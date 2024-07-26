@@ -88,7 +88,7 @@ module.exports.delete = async(req, res) => {
     });
     res.redirect('back');
 }
-// [GET] /cart/update/:productId/quantity
+// [GET] /cart/update/:productId/:quantity
 module.exports.update = async(req, res) => {
     const cartId = req.cookies.cartId;
     const productId = req.params.productId;
@@ -103,3 +103,4 @@ module.exports.update = async(req, res) => {
     });
     res.redirect('back');
 }
+
